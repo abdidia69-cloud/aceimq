@@ -1,0 +1,86 @@
+<!doctype html>
+<html lang="id">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="Unggah video dan bagikan tautannya melalui Aceimq.">
+  <title>Aceimq — Upload Video</title>
+  <style>
+    :root{font-family:Inter,system-ui,-apple-system,Segoe UI,Roboto,Arial,sans-serif;color:#182230;background:#f6f7f9;font-synthesis:none}
+    *{box-sizing:border-box}body{margin:0}.topbar{height:70px;background:#fff;border-bottom:1px solid #e7e9ee;display:flex;align-items:center;justify-content:space-between;padding:0 clamp(18px,4vw,56px)}
+    .brand{font-size:27px;font-weight:850;letter-spacing:-1.3px;color:#111827;text-decoration:none}.brand span{color:#2563eb}
+    .wrap{max-width:900px;margin:38px auto;padding:0 20px}.intro{text-align:center;margin-bottom:26px}.intro h1{font-size:clamp(28px,4vw,40px);margin:0 0 10px;letter-spacing:-1px}.intro p{margin:0;color:#667085;line-height:1.65}
+    .panel{background:#fff;border:1px solid #e6e8ed;border-radius:22px;padding:clamp(20px,4vw,34px);box-shadow:0 12px 40px rgba(16,24,40,.045)}
+    .drop{border:2px dashed #cbd5e1;background:#fbfcfe;border-radius:18px;padding:34px 18px;text-align:center;transition:background .2s,border-color .2s}.drop.drag{border-color:#2563eb;background:#eff6ff}
+    .symbol{height:62px;width:62px;border-radius:18px;background:#eaf1ff;color:#2563eb;display:grid;place-items:center;margin:0 auto 18px;font-size:30px}
+    .drop h2{font-size:20px;margin:0 0 8px}.drop p{color:#667085;margin:0 0 20px;font-size:14px}
+    button,.button{border:0;border-radius:999px;background:#202938;color:#fff;font-weight:700;padding:12px 20px;cursor:pointer;font-size:14px;display:inline-flex;align-items:center;justify-content:center;gap:8px;text-decoration:none}
+    button:hover,.button:hover{background:#344054}button:disabled{opacity:.6;cursor:wait}#fileInput{display:none}
+    .small,.hint{font-size:13px;color:#667085;line-height:1.55}.small{margin-top:14px}
+    .fieldlabel{font-weight:700;font-size:13px;display:block;margin:16px 0 8px}.field{width:100%;border:1px solid #d0d5dd;border-radius:10px;padding:12px;font:inherit;background:#fff}
+    .affiliate-settings{border:1px solid #e6e8ed;border-radius:16px;padding:20px;margin-bottom:22px}.affiliate-settings h2{font-size:17px;margin:0 0 6px}
+    .progressWrap{display:none;margin-top:20px}.progress{height:8px;background:#eaecf0;border-radius:99px;overflow:hidden}.bar{height:100%;width:0;background:#2563eb;transition:width .12s}.status{font-size:13px;color:#667085;margin:9px 0}
+    .error{display:none;background:#fef3f2;color:#b42318;border:1px solid #fecdca;padding:12px;border-radius:12px;margin-top:14px;font-size:13px;white-space:pre-wrap}
+    .result{display:none;margin-top:24px;border-top:1px solid #eaecf0;padding-top:22px}.result h2{margin:0 0 8px;font-size:20px;color:#067647}.result video{display:block;width:100%;max-height:460px;background:#0b0f16;border-radius:14px;margin:16px 0}
+    .linkrow{display:flex;gap:8px}.linkrow input{min-width:0;flex:1;border:1px solid #d0d5dd;border-radius:10px;padding:12px;font-size:13px}
+    .footer{text-align:center;color:#98a2b3;font-size:12px;margin:22px 0}
+    @media(max-width:560px){.wrap{margin:24px auto}.topbar{height:64px}.brand{font-size:24px}.linkrow{flex-direction:column}.linkrow button{width:100%}}
+  </style>
+</head>
+<body>
+  <header class="topbar">
+    <a class="brand" href="/">aceimq<span>.</span></a>
+    <label class="button" for="fileInput">↑ Upload video</label>
+  </header>
+  <main class="wrap">
+    <section class="intro">
+      <h1>Upload video dengan mudah</h1>
+      <p>Unggah video, lalu bagikan tautan halaman publiknya. Pengaturan tautan afiliasi bersifat opsional.</p>
+    </section>
+
+    <section class="panel">
+      <div class="affiliate-settings">
+        <h2>Link afiliasi (opsional)</h2>
+        <p class="hint">Jika ditambahkan, tautan ditampilkan secara jelas pada halaman video. Penonton memilih sendiri apakah ingin membukanya.</p>
+        <label class="fieldlabel" for="affiliateTitle">Judul produk / afiliasi</label>
+        <input class="field" id="affiliateTitle" maxlength="160" placeholder="Contoh: Tas ransel ringan">
+        <label class="fieldlabel" for="affiliateDescription">Deskripsi (opsional)</label>
+        <input class="field" id="affiliateDescription" maxlength="500" placeholder="Keterangan singkat produk">
+        <label class="fieldlabel" for="affiliateUrl">URL afiliasi</label>
+        <input class="field" id="affiliateUrl" type="url" maxlength="2048" placeholder="https://...">
+      </div>
+
+      <div class="drop" id="drop">
+        <div class="symbol">⇧</div>
+        <h2>Letakkan video di sini</h2>
+        <p>atau pilih file video dari perangkat kamu</p>
+        <label class="button" for="fileInput">Pilih video</label>
+        <input id="fileInput" type="file" accept="video/mp4,video/webm,video/quicktime,video/ogg,video/x-matroska">
+        <div class="small" id="limit">Memeriksa batas upload…</div>
+      </div>
+
+      <div class="progressWrap" id="progressWrap">
+        <div class="status" id="status">Menyiapkan upload…</div>
+        <div class="progress"><div class="bar" id="bar"></div></div>
+      </div>
+
+      <div class="error" id="error" role="alert"></div>
+
+      <section class="result" id="result">
+        <h2>Video berhasil diunggah</h2>
+        <p class="hint">Pratinjau di bawah ini hanya untuk memeriksa file. Salin tautan halaman publik untuk dibagikan.</p>
+        <video id="video" controls playsinline preload="metadata"></video>
+        <label class="fieldlabel" for="videoLink">Tautan halaman video publik</label>
+        <div class="linkrow">
+          <input id="videoLink" readonly>
+          <button id="copyLink" type="button">Salin tautan</button>
+          <a class="button" id="openLink" href="#" target="_blank" rel="noopener noreferrer">Buka halaman</a>
+        </div>
+        <p class="hint" id="affiliateResult"></p>
+      </section>
+    </section>
+    <div class="footer">Aceimq · Unggah dan bagikan hanya video yang kamu miliki atau berhak bagikan.</div>
+  </main>
+  <script src="/app.js" defer></script>
+</body>
+</html>
